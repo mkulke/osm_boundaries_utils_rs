@@ -1,6 +1,7 @@
 extern crate osmpbfreader;
 
 use geo_types::{Coordinate, LineString, MultiPolygon, Point, Polygon};
+use smol_str::SmolStr;
 use std::borrow::Borrow;
 use std::collections::BTreeMap;
 
@@ -219,7 +220,7 @@ pub fn build_boundary_parts<T: Borrow<osmpbfreader::OsmObj>>(
                     warn!(
                         "boundary: relation/{} ({}): unclosed polygon, dist({:?}, {:?}) = {}",
                         relation.id.0,
-                        relation.tags.get("name").map_or("", String::as_str),
+                        relation.tags.get("name").map_or("", SmolStr::as_str),
                         poly_geom.first().unwrap().id,
                         poly_geom.last().unwrap().id,
                         distance
@@ -246,15 +247,15 @@ fn test_build_boundary_empty() {
     };
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(4).into(),
-        role: "outer".to_string(),
+        role: "outer".into(),
     });
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(65).into(),
-        role: "outer".to_string(),
+        role: "outer".into(),
     });
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(22).into(),
-        role: "".to_string(),
+        role: "".into(),
     });
     assert!(build_boundary(&relation, &objects).is_none());
 }

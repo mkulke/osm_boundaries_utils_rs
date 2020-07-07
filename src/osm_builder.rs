@@ -1,9 +1,10 @@
 extern crate osmpbfreader;
 use geo_types::Point;
+use smol_str::SmolStr;
 use std::collections::BTreeMap;
 
-pub fn named_node(lon: f64, lat: f64, name: &'static str) -> (Point<f64>, Option<String>) {
-    (Point::new(lon, lat), Some(name.to_string()))
+pub fn named_node(lon: f64, lat: f64, name: &'static str) -> (Point<f64>, Option<SmolStr>) {
+    (Point::new(lon, lat), Some(name.into()))
 }
 
 pub struct Relation<'a> {
@@ -12,7 +13,7 @@ pub struct Relation<'a> {
 }
 
 impl<'a> Relation<'a> {
-    pub fn outer(&mut self, coords: Vec<(Point<f64>, Option<String>)>) -> &'a mut Relation {
+    pub fn outer(&mut self, coords: Vec<(Point<f64>, Option<SmolStr>)>) -> &'a mut Relation {
         let id = self.builder.way(coords);
         if let &mut osmpbfreader::OsmObj::Relation(ref mut rel) = self
             .builder
@@ -21,7 +22,7 @@ impl<'a> Relation<'a> {
             .unwrap()
         {
             rel.refs.push(osmpbfreader::Ref {
-                role: "outer".to_string(),
+                role: "outer".into(),
                 member: id.into(),
             });
         }
@@ -30,7 +31,7 @@ impl<'a> Relation<'a> {
 }
 
 impl<'a> Relation<'a> {
-    pub fn inner(&mut self, coords: Vec<(Point<f64>, Option<String>)>) -> &'a mut Relation {
+    pub fn inner(&mut self, coords: Vec<(Point<f64>, Option<SmolStr>)>) -> &'a mut Relation {
         let id = self.builder.way(coords);
         if let &mut osmpbfreader::OsmObj::Relation(ref mut rel) = self
             .builder
@@ -39,7 +40,7 @@ impl<'a> Relation<'a> {
             .unwrap()
         {
             rel.refs.push(osmpbfreader::Ref {
-                role: "inner".to_string(),
+                role: "inner".into(),
                 member: id.into(),
             });
         }
@@ -52,7 +53,7 @@ pub struct OsmBuilder {
     way_id: i64,
     relation_id: i64,
     pub objects: BTreeMap<osmpbfreader::OsmId, osmpbfreader::OsmObj>,
-    named_nodes: BTreeMap<String, osmpbfreader::NodeId>,
+    named_nodes: BTreeMap<SmolStr, osmpbfreader::NodeId>,
 }
 
 impl OsmBuilder {
@@ -81,7 +82,7 @@ impl OsmBuilder {
         }
     }
 
-    pub fn way(&mut self, coords: Vec<(Point<f64>, Option<String>)>) -> osmpbfreader::WayId {
+    pub fn way(&mut self, coords: Vec<(Point<f64>, Option<SmolStr>)>) -> osmpbfreader::WayId {
         let nodes = coords
             .into_iter()
             .map(|pair| self.node(pair.0, pair.1))
@@ -97,7 +98,7 @@ impl OsmBuilder {
         id
     }
 
-    pub fn node(&mut self, coord: Point<f64>, name: Option<String>) -> osmpbfreader::NodeId {
+    pub fn node(&mut self, coord: Point<f64>, name: Option<SmolStr>) -> osmpbfreader::NodeId {
         if let Some(value) = name.as_ref().and_then(|n| self.named_nodes.get(n)) {
             return *value;
         }

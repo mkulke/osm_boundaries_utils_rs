@@ -3,6 +3,7 @@ extern crate geo_types;
 extern crate log;
 extern crate geo;
 extern crate osmpbfreader;
+extern crate smol_str;
 
 mod boundaries;
 pub mod osm_builder;
