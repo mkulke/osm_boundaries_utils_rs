@@ -10,6 +10,7 @@ readme = "README.md"
 
 [dependencies]
 log = "0.4"
-osmpbfreader = "0.13"
+osmpbfreader = { git = "https://github.com/mkulke/osmpbfreader-rs", branch = "smart-string" }
+smartstring = { version = "0.2", features = ["serde"] }
 geo-types = "^0.6"
 geo = "0.14"

@@ -1,6 +1,7 @@
 extern crate osmpbfreader;
 
 use geo_types::{Coordinate, LineString, MultiPolygon, Point, Polygon};
+use smartstring::alias::String;
 use std::borrow::Borrow;
 use std::collections::BTreeMap;
 
@@ -246,15 +247,15 @@ fn test_build_boundary_empty() {
     };
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(4).into(),
-        role: "outer".to_string(),
+        role: "outer".into(),
     });
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(65).into(),
-        role: "outer".to_string(),
+        role: "outer".into(),
     });
     relation.refs.push(osmpbfreader::Ref {
         member: osmpbfreader::WayId(22).into(),
-        role: "".to_string(),
+        role: "".into(),
     });
     assert!(build_boundary(&relation, &objects).is_none());
 }
